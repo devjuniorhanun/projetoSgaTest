@@ -37,9 +37,9 @@ class WeighingService
             }
             $registration = FarmStateRegistration::query()->whereKey($data['farm_state_registration_id'])
                 ->where('producer_id', $data['producer_id'])->where('farm_id', $data['farm_id'])
-                ->where('culture_id', $data['culture_id'])->where('status', 'A')->first();
+                ->where('status', 'A')->first();
             if (!$registration) {
-                throw ValidationException::withMessages(['farm_state_registration_id' => ['A inscrição deve estar ativa e pertencer ao produtor, fazenda e produto.']]);
+                throw ValidationException::withMessages(['farm_state_registration_id' => ['A inscrição deve estar ativa e pertencer ao produtor e à fazenda.']]);
             }
             if (!DB::table('crop_culture')->where('crop_id', $data['crop_id'])->where('culture_id', $data['culture_id'])->exists()) {
                 throw ValidationException::withMessages(['culture_id' => ['O produto deve estar vinculado à safra selecionada.']]);

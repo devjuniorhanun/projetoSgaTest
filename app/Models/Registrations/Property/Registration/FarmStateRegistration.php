@@ -2,7 +2,6 @@
 
 namespace App\Models\Registrations\Property\Registration;
 
-use App\Models\Registrations\Harvest\Culture;
 use App\Models\Registrations\Property\Areas\Farm;
 use App\Models\Registrations\Property\Producer;
 use Illuminate\Database\Eloquent\Model;
@@ -13,9 +12,19 @@ class FarmStateRegistration extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['producer_id', 'farm_id', 'culture_id', 'state_registration', 'description', 'status'];
+    protected $fillable = ['producer_id', 'farm_id', 'state_registration', 'description', 'status'];
+    protected $appends = ['producer_name', 'farm_name'];
 
     public function producer(): BelongsTo { return $this->belongsTo(Producer::class); }
     public function farm(): BelongsTo { return $this->belongsTo(Farm::class); }
-    public function culture(): BelongsTo { return $this->belongsTo(Culture::class); }
+
+    public function getProducerNameAttribute(): ?string
+    {
+        return $this->producer?->owner?->corporate_name;
+    }
+
+    public function getFarmNameAttribute(): ?string
+    {
+        return $this->farm?->name;
+    }
 }

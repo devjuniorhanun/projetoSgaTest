@@ -24,8 +24,8 @@ class ContractService
             $this->technicalLosses->processDue($userId);
             $this->assertBuyer((int) $data['buyer_id']);
             $registration = FarmStateRegistration::query()->whereKey($data['farm_state_registration_id'])
-                ->where('producer_id', $data['producer_id'])->where('culture_id', $data['culture_id'])->where('status', 'A')->first();
-            if (!$registration) throw ValidationException::withMessages(['farm_state_registration_id' => ['Inscrição incompatível com produtor e produto.']]);
+                ->where('producer_id', $data['producer_id'])->where('status', 'A')->first();
+            if (!$registration) throw ValidationException::withMessages(['farm_state_registration_id' => ['Inscrição incompatível com o produtor.']]);
             if (!DB::table('crop_culture')->where('crop_id', $data['crop_id'])->where('culture_id', $data['culture_id'])->exists()) {
                 throw ValidationException::withMessages(['culture_id' => ['O produto deve estar vinculado à safra selecionada.']]);
             }

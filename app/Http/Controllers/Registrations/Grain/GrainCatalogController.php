@@ -39,7 +39,15 @@ class GrainCatalogController extends Controller
         $model = $this->model($catalog);
         $query = $model::query();
 
+        if ($catalog === 'farm-state-registrations') {
+            $query->with(['producer.owner', 'farm']);
+        }
+
         foreach (['status', 'producer_id', 'farm_id', 'culture_id', 'crop_id', 'grain_scale_id', 'grain_warehouse_id'] as $field) {
+            if ($catalog === 'farm-state-registrations' && $field === 'culture_id') {
+                continue;
+            }
+
             if ($request->filled($field)) {
                 $query->where($field, $request->input($field));
             }
@@ -104,7 +112,7 @@ class GrainCatalogController extends Controller
             'discount-types' => ['culture_id' => [$required, 'exists:cultures,id'], 'name' => [$required, 'string'], 'code' => [$required, 'string'], 'measurement_type' => ['sometimes', Rule::in(['PERCENTAGE'])], 'measurement_unit' => ['sometimes', Rule::in(['PERCENT'])], 'calculation_method' => ['sometimes', Rule::in(['MANUAL', 'FORMULA'])], 'affects_commercial_weight' => ['sometimes', 'boolean'], 'generates_impurity' => ['sometimes', 'boolean'], 'grain_impurity_type_id' => ['nullable', 'exists:grain_impurity_types,id'], 'display_order' => ['sometimes', 'integer', 'min:0'], 'status' => $status, 'description' => ['nullable', 'string']],
             'impurity-types' => ['name' => [$required, 'string'], 'code' => [$required, 'string', Rule::unique('grain_impurity_types')->ignore($id)], 'measurement_unit' => ['sometimes', Rule::in(['KG'])], 'requires_destination' => ['sometimes', 'boolean'], 'status' => $status, 'description' => ['nullable', 'string']],
             'technical-loss-configs' => ['producer_id' => [$required, 'exists:producers,id'], 'culture_id' => [$required, 'exists:cultures,id'], 'monthly_percentage' => [$required, 'numeric', 'gt:0', 'lte:100'], 'effective_from' => [$required, 'date'], 'effective_until' => ['nullable', 'date', 'after_or_equal:effective_from'], 'status' => $status],
-            'farm-state-registrations' => ['producer_id' => [$required, 'exists:producers,id'], 'farm_id' => [$required, 'exists:farms,id'], 'culture_id' => [$required, 'exists:cultures,id'], 'state_registration' => [$required, 'string', 'max:50'], 'description' => ['nullable', 'string'], 'status' => $status],
+            'farm-state-registrations' => ['producer_id' => [$required, 'exists:producers,id'], 'farm_id' => [$required, 'exists:farms,id'], 'state_registration' => [$required, 'string', 'max:50', Rule::unique('farm_state_registrations')->ignore($id)], 'description' => ['nullable', 'string'], 'status' => $status],
         };
     }
 

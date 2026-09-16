@@ -893,6 +893,26 @@ class LegacyCsvImportService
                 'updated_at' => now(),
             ]);
 
+            $stateRegistration = trim((string) ($row['inscricao_estadual'] ?? ''));
+
+            if ($stateRegistration !== '') {
+                DB::table('farm_state_registrations')->updateOrInsert(
+                    [
+                        'state_registration' => $stateRegistration,
+                    ],
+                    [
+                        'producer_id' => $producerId,
+                        'farm_id' => $newId,
+                        'culture_id' => null,
+                        'description' => null,
+                        'status' => $this->status($row['status']),
+                        'deleted_at' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ],
+                );
+            }
+
             $this->map($batch, 'farms', (int) $row['id'], 'farms', $newId);
             $this->count($batch, true);
         }

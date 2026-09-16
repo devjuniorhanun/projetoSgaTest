@@ -45,4 +45,16 @@ class GrainModuleStructureTest extends TestCase
 
         $this->assertSame(89000.0, $balance->availableForContract());
     }
+
+    public function test_state_registration_is_not_tied_to_culture(): void
+    {
+        $controller = file_get_contents(base_path('app/Http/Controllers/Registrations/Grain/GrainCatalogController.php'));
+        $model = file_get_contents(base_path('app/Models/Registrations/Property/Registration/FarmStateRegistration.php'));
+
+        $this->assertNotFalse($controller);
+        $this->assertNotFalse($model);
+        $this->assertDoesNotMatchRegularExpression("/'farm-state-registrations' => \\[[^\\n]*'culture_id'/", $controller);
+        $this->assertMatchesRegularExpression("/'farm-state-registrations' => \\[[^\\n]*'state_registration'/", $controller);
+        $this->assertStringNotContainsString("'culture_id'", $model);
+    }
 }

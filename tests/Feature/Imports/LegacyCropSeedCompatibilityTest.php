@@ -21,4 +21,14 @@ class LegacyCropSeedCompatibilityTest extends TestCase
         $this->assertStringContainsString("'HARVESTER_ADVANCE'", $source);
         $this->assertStringContainsString("'TRANSPORTER_ADVANCE'", $source);
     }
+
+    public function test_farm_import_also_creates_state_registration_without_culture(): void
+    {
+        $source = file_get_contents(base_path('app/Services/Imports/LegacyCsvImportService.php'));
+
+        $this->assertNotFalse($source);
+        $this->assertStringContainsString("\$row['inscricao_estadual']", $source);
+        $this->assertStringContainsString("DB::table('farm_state_registrations')->updateOrInsert", $source);
+        $this->assertStringContainsString("'culture_id' => null", $source);
+    }
 }

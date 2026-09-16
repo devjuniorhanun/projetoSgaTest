@@ -21,9 +21,9 @@ class BalanceAssignmentService
                 throw ValidationException::withMessages(['destination_producer_id' => ['A cessão deve ocorrer entre produtores diferentes.']]);
             }
             $validRegistration = FarmStateRegistration::query()->whereKey($data['destination_farm_state_registration_id'])
-                ->where('producer_id', $data['destination_producer_id'])->where('culture_id', $origin->culture_id)->where('status', 'A')->exists();
+                ->where('producer_id', $data['destination_producer_id'])->where('status', 'A')->exists();
             if (!$validRegistration) {
-                throw ValidationException::withMessages(['destination_farm_state_registration_id' => ['Inscrição incompatível com o produtor de destino e o produto.']]);
+                throw ValidationException::withMessages(['destination_farm_state_registration_id' => ['Inscrição incompatível com o produtor de destino.']]);
             }
             $destination = GrainBalance::query()->firstOrCreate([
                 'producer_id' => $data['destination_producer_id'],
