@@ -72,6 +72,18 @@ GET  /api/releases/agricultural/services/defensive/tank/operator/{operator}?date
 POST /api/releases/agricultural/services/defensive/tank/movement
 ```
 
+### Compatibilidade do fechamento com o frontend atual
+
+O contrato oficial do fechamento recebe `os_number` e o identificador real em
+`operator_tank_id`. Enquanto o frontend ainda envia `order_id` e coloca o ID do
+tanqueiro em `operator_tank_id`, o backend reconhece esse formato legado,
+localiza a OS pelo ID e escolhe o primeiro tanque cronológico do operador, a
+partir da data programada, que tenha saldo para todos os produtos do evento.
+
+Uma OS antiga pode ser fechada usando tanque de data posterior à aplicação.
+Tanques anteriores à data da OS continuam proibidos. Depois do consumo, os
+saldos transportados dos tanques posteriores são recalculados em sequência.
+
 O endpoint `tank-operators` retorna somente tanqueiros ativos, sem duplicidade,
 que participam de OS abertas da safra selecionada. O campo `id` representa o
 `AgriculturalOperator` e deve ser usado nos endpoints de planejamento e tanque;

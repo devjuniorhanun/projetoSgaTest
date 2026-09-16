@@ -35,6 +35,7 @@ class AgriculturalDefensiveOrderStructureTest extends TestCase
         $routes = file_get_contents(base_path('routes/api.php'));
         $service = file_get_contents(base_path('app/Services/Releases/Agricultural/Services/Defensive/AgriculturalDefensiveOrderService.php'));
         $request = file_get_contents(base_path('app/Http/Requests/Releases/Agricultural/Services/Defensive/AgriculturalDefensiveOrderRequest.php'));
+        $closingRequest = file_get_contents(base_path('app/Http/Requests/Releases/Agricultural/Services/Defensive/AgriculturalDefensiveOrderClosingRequest.php'));
         $this->assertStringContainsString("'/fleets/by-function'", $routes);
         $this->assertStringContainsString("'/products'", $routes);
         $this->assertStringContainsString("'/crops/{crop}/tank-operators/{operator}/open-dates'", $routes);
@@ -62,6 +63,9 @@ class AgriculturalDefensiveOrderStructureTest extends TestCase
         $this->assertStringContainsString("- (float) \$tankProduct->used_quantity", $service);
         $this->assertStringContainsString("- (float) \$tankProduct->returned_quantity", $service);
         $this->assertStringContainsString("round(\$closingBomb * (float) \$item->pump, 3)", $service);
+        $this->assertStringContainsString('resolveLegacyClosingTank', $service);
+        $this->assertStringContainsString("'required_without:order_id'", $closingRequest);
+        $this->assertStringContainsString("'required_without:os_number'", $closingRequest);
         $this->assertStringContainsString("round(max(\$product['open_quantity'] - \$product['tank_balance'], 0), 3)", $service);
         $this->assertStringContainsString("'decimal:0,3'", $request);
         $this->assertStringContainsString('withValidator', $request);
