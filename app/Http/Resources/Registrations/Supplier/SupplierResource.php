@@ -29,7 +29,10 @@ class SupplierResource extends JsonResource {
             // Expõe o campo status.
             'status' => $this->status,
             'typeSuppliers' => TypeSupplierResource::collection($this->whenLoaded('types')),
-            'type_supplier_ids' => $this->types->pluck('id'),
+            'type_supplier_ids' => $this->whenLoaded(
+                'types',
+                fn () => $this->types->pluck('id')->map(fn ($id) => (string) $id)->values(),
+            ),
         ];
     }
 }

@@ -27,6 +27,18 @@ class SupplierRequest extends FormRequest
 // Fecha o bloco de código atual.
     }
 
+    /**
+     * Mantém compatibilidade com clientes antigos que ainda enviam typeSuppliers.
+     */
+    protected function prepareForValidation(): void
+    {
+        if (! $this->has('type_supplier_ids') && $this->has('typeSuppliers')) {
+            $this->merge([
+                'type_supplier_ids' => $this->input('typeSuppliers'),
+            ]);
+        }
+    }
+
     // Define todas as regras de validação do formulário.
 // Declara o método responsável por esta operação.
     public function rules(): array
@@ -89,8 +101,12 @@ class SupplierRequest extends FormRequest
             // Valida o campo conforme as regras de negócio.
 // Restringe o campo a um conjunto fechado de valores permitidos.
             'status' => ['sometimes', Rule::in(['A','I'])],
-            'typeSuppliers' => ['sometimes', 'array'],
-            'typeSuppliers.*' => ['integer', 'distinct', 'exists:type_suppliers,id'],
+            'type_supplier_ids' => [
+                $this->isMethod('post') ? 'required' : 'sometimes',
+                'array',
+                'min:1',
+            ],
+            'type_supplier_ids.*' => ['integer', 'distinct', 'exists:type_suppliers,id'],
 // Executa a instrução correspondente à regra ou operação atual.
         ];
 // Fecha o bloco de código atual.
@@ -143,6 +159,7 @@ class SupplierRequest extends FormRequest
             // Mensagem para distinct.
 // Define este campo ou configuração na estrutura atual.
             'distinct' => 'Não informe valores repetidos em :attribute.',
+            'min.array' => 'Selecione ao menos um item em :attribute.',
             // Mensagem para decimal.
 // Garante que o valor recebido tenha formato numérico válido.
             'decimal' => 'O campo :attribute deve possuir formato numérico válido.',
@@ -216,6 +233,7 @@ class SupplierRequest extends FormRequest
             // Define o nome amigável de type_supplier_id.
 // Define este campo ou configuração na estrutura atual.
             'type_supplier_id' => 'tipo de fornecedor',
+            'type_supplier_ids' => 'tipos de fornecedor',
             // Define o nome amigável de corporate_reason.
 // Define este campo ou configuração na estrutura atual.
             'corporate_reason' => 'razão social',
